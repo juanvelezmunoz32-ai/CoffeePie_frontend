@@ -65,6 +65,7 @@ ENV DEBIAN_FRONTEND=noninteractive \
 # Runtime deps — xvfb and x11vnc removed (not needed for X11 forwarding)
 RUN apt-get update && apt-get install -y \
     wget \
+    curl \
     libgl1 \
     libosmesa6 \
     libxkbcommon-x11-0 \
@@ -113,12 +114,32 @@ RUN apt-get update && apt-get install -y \
     libpango-1.0-0 \
     libpangoft2-1.0-0 \
     libdbus-glib-1-2 \
-    && wget  -q -O /tmp/google-chrome.deb \
-      https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb \
-    && apt-get install -y /tmp/google-chrome.deb \
-    && rm /tmp/google-chrome.deb \
     && rm -rf /var/lib/apt/lists/*    
- 
+# Install browser depending on architecture:
+#   amd64 → Google Chrome (real .deb from Google)
+#   arm64 → Chromium from Debian repos (not a snap)
+RUN ARCH=$(dpkg --print-architecture) && \
+    echo "Detected architecture: $ARCH" && \
+    if [ "$ARCH" = "amd64" ]; then \
+        wget -q -O /tmp/google-chrome.deb \
+            https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb \
+        && apt-get update \
+        && apt-get install -y /tmp/google-chrome.deb \
+        && rm /tmp/google-chrome.deb \
+        && rm -rf /var/lib/apt/lists/* ; \
+    elif [ "$ARCH" = "arm64" ]; then \
+        apt-get update \
+        && apt-get install -y chromium chromium-driver \
+        && rm -rf /var/lib/apt/lists/* ; \
+    else \
+        echo "Unsupported architecture: $ARCH" && exit 1 ; \
+    fi
+
+
+
+
+
+
 COPY --from=builder /build/CoffeePieContent       /app/CoffeePieContent
 COPY --from=builder /build/requirements_current.txt /app/requirements_current.txt
  

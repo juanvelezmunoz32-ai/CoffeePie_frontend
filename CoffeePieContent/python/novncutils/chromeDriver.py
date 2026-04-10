@@ -89,6 +89,8 @@ def open_console_with_tokens(console_url, ticket, csrf_token):
         "/usr/bin/google-chrome",
         "/usr/bin/google-chrome-stable",
         "/usr/local/bin/google-chrome",
+        "/usr/bin/chromium",                # arm64 Debian/Armbian
+         "/usr/bin/chromium-browser",        # arm64 alternate name
     ]
     for candidate in chrome_candidates:
         if os.path.exists(candidate):
