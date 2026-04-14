@@ -80,6 +80,8 @@ def open_console_with_tokens(console_url, ticket, csrf_token):
     chrome_options.add_argument("--disable-plugins")
     chrome_options.add_argument("--disable-component-extensions-with-background-pages")
     chrome_options.add_argument("--disable-setuid-sandbox")
+    chrome_options.add_argument("--ozone-platform=wayland")   # ← add this
+    chrome_options.add_argument("--enable-features=UseOzonePlatform")  #
     #chrome_options.add_argument("--start-maximized")
     chrome_options.add_argument("--window-size=1,1")
     chrome_options.add_argument("--window-position=0,0")

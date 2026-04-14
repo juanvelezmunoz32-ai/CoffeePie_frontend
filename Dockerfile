@@ -75,45 +75,51 @@ ENV DEBIAN_FRONTEND=noninteractive \
  
 # Runtime deps — xvfb and x11vnc removed (not needed for X11 forwarding)
 
+# Stage 2 Runtime — fixed package names for Ubuntu 24.04
+# Stage 2 Runtime — fixed package names for Ubuntu 24.04
 RUN apt-get update && apt-get install -y \
     wget \
     curl \
-    # --- OpenGL / EGL (Panfrost path) ---
+    python3 \
+    python3-pip \
+    ca-certificates \
+    # --- OpenGL / EGL — FIXED names for Ubuntu 24.04 ---
     libgl1-mesa-dri \
-    libgles2-mesa \
-    libegl1-mesa \
+    libgles2 \
+    libegl1 \
     libegl-mesa0 \
-    # --- Software fallback ---
     libosmesa6 \
+    libglvnd0 \
+    libglx0 \
     # --- Wayland ---
     libwayland-client0 \
     libwayland-egl1 \
     libwayland-cursor0 \
-    # --- Qt5 Wayland plugin (critical) ---
+    # --- Qt5 Wayland plugin ---
     qtwayland5 \
     libqt5waylandclient5 \
-    # --- Qt5 QML runtime ---
+    # --- Qt5 QML modules ---
     qml-module-qtquick2 \
     qml-module-qtquick-controls2 \
     qml-module-qtquick-layouts \
     qml-module-qtquick-window2 \
-    # --- Fonts & input ---
+    # --- Input / fonts ---
     libxkbcommon0 \
     libxkbcommon-x11-0 \
     libfontconfig1 \
     libfreetype6 \
     fonts-dejavu-core \
     fontconfig-config \
-    # --- DBus (Qt needs this) ---
+    # --- DBus ---
     libdbus-1-3 \
     dbus \
-    # --- GLib / GTK deps ---
+    # --- GLib / GTK ---
     libglib2.0-0 \
     libgtk-3-0 \
     libpango-1.0-0 \
     libpangoft2-1.0-0 \
     libdbus-glib-1-2 \
-    # --- X11 compat libs (Qt may pull these even in wayland mode) ---
+    # --- X11 compat (Qt pulls even in Wayland mode) ---
     libx11-6 \
     libxext6 \
     libxrender1 \
@@ -123,12 +129,9 @@ RUN apt-get update && apt-get install -y \
     libasound2t64 \
     # --- SSL / network ---
     libssl3 \
-    ca-certificates \
     libnss3 \
     libnspr4 \
-    # --- Python ---
-    python3 \
-    python3-pip \
+    libsm6 \
     && rm -rf /var/lib/apt/lists/*
 # Install browser depending on architecture:
 #   amd64 → Google Chrome (real .deb from Google)
