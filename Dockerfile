@@ -55,84 +55,67 @@ RUN python3 -m pip install --no-cache-dir --break-system-packages -r requirement
 FROM ubuntu:24.04
  
 ENV DEBIAN_FRONTEND=noninteractive \
-   # DISPLAY=:0 \
-
-   # --- Wayland display ---
-    QT_QPA_PLATFORM=wayland \
-    XDG_RUNTIME_DIR=/run/user/1000 \
-    WAYLAND_DISPLAY=wayland-1 \
+    DISPLAY=:0 \
     QT_QPA_PLATFORM=xcb \
     QT_AUTO_SCREEN_SCALE_FACTOR=1 \
-    QT_WAYLAND_DISABLE_WINDOWDECORATION=1 \
     QT_XCB_GL_INTEGRATION=none \
-     # --- Rendering: try Panfrost (RK3566/Mali-G52) first, fall back to sw ---
-    LIBGL_ALWAYS_SOFTWARE=0 \
-    # --- Rendering: try Panfrost (RK3566/Mali-G52) first, fall back to sw ---
-    PYOPENGL_PLATFORM=egl \
     QT_LOGGING_RULES="qt.qpa.*=false;qt.qpa.xcb.*=false" \
     LIBGL_ALWAYS_SOFTWARE=1 \
     PYOPENGL_PLATFORM=osmesa
  
 # Runtime deps — xvfb and x11vnc removed (not needed for X11 forwarding)
-
-# Stage 2 Runtime — fixed package names for Ubuntu 24.04
-# Stage 2 Runtime — fixed package names for Ubuntu 24.04
 RUN apt-get update && apt-get install -y \
     wget \
     curl \
+    libgl1 \
+    libosmesa6 \
+    libxkbcommon-x11-0 \
+    libdbus-1-3 \
+    libfontconfig1 \
+    libfreetype6 \
+    libx11-6 \
+    libxext6 \
+    libxfixes3 \
+    libxi6 \
+    libxrender1 \
+    libxrandr2 \
+    libxcursor1 \
+    libxtst6 \
+    libxinerama1 \
     python3 \
     python3-pip \
     ca-certificates \
-    # --- OpenGL / EGL — FIXED names for Ubuntu 24.04 ---
-    libgl1-mesa-dri \
-    libgles2 \
-    libegl1 \
-    libegl-mesa0 \
-    libosmesa6 \
     libglvnd0 \
     libglx0 \
-    # --- Wayland ---
-    libwayland-client0 \
-    libwayland-egl1 \
-    libwayland-cursor0 \
-    # --- Qt5 Wayland plugin ---
-    qtwayland5 \
-    libqt5waylandclient5 \
-    # --- Qt5 QML modules ---
-    qml-module-qtquick2 \
-    qml-module-qtquick-controls2 \
-    qml-module-qtquick-layouts \
-    qml-module-qtquick-window2 \
-    # --- Input / fonts ---
-    libxkbcommon0 \
-    libxkbcommon-x11-0 \
-    libfontconfig1 \
-    libfreetype6 \
-    fonts-dejavu-core \
-    fontconfig-config \
-    # --- DBus ---
-    libdbus-1-3 \
-    dbus \
-    # --- GLib / GTK ---
+    libxrender-dev \
     libglib2.0-0 \
+    libsm6 \
+    libxcb1 \
+    libxcb-icccm4 \
+    libxcb-image0 \
+    libxcb-keysyms1 \
+    libxcb-randr0 \
+    libxcb-render0 \
+    libxcb-render-util0 \
+    libxcb-shape0 \
+    libxcb-xfixes0 \
+    libxcb-xinerama0 \
+    libxcb-xkb1 \
+    libxkbcommon0 \
+    libgssapi-krb5-2 \
+    libkrb5-3 \
+    libssl3 \
+    libnss3 \
+    libnspr4 \
+    libxss1 \
+    libasound2t64 \
+    fontconfig-config \
+    fonts-dejavu-core \
     libgtk-3-0 \
     libpango-1.0-0 \
     libpangoft2-1.0-0 \
     libdbus-glib-1-2 \
-    # --- X11 compat (Qt pulls even in Wayland mode) ---
-    libx11-6 \
-    libxext6 \
-    libxrender1 \
-    libxfixes3 \
-    libxcb1 \
-    # --- Audio ---
-    libasound2t64 \
-    # --- SSL / network ---
-    libssl3 \
-    libnss3 \
-    libnspr4 \
-    libsm6 \
-    && rm -rf /var/lib/apt/lists/*
+    && rm -rf /var/lib/apt/lists/*    
 # Install browser depending on architecture:
 #   amd64 → Google Chrome (real .deb from Google)
 #   arm64 → Chromium from Debian repos (not a snap)

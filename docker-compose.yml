@@ -11,36 +11,18 @@ services:
     command: python3 CoffeePieContent/python/main.py
 
     environment:
-           # --- Wayland (read from host shell at runtime) ---
-      - WAYLAND_DISPLAY=${WAYLAND_DISPLAY:-wayland-1}
-      - XDG_RUNTIME_DIR=/run/user/1000
-      # --- Qt ---
-      - QT_QPA_PLATFORM=wayland
+      - DISPLAY=:0          # inherits :0 from your host shell
+      - QT_QPA_PLATFORM=xcb
       - QT_AUTO_SCREEN_SCALE_FACTOR=1
-      - QT_WAYLAND_DISABLE_WINDOWDECORATION=1
-      - QT_LOGGING_RULES=qt.qpa.*=false
-      # --- Rendering: Panfrost (RK3566 Mali-G52 has open driver) ---
-      - LIBGL_ALWAYS_SOFTWARE=0
-      - PYOPENGL_PLATFORM=egl    # software renderer — safe default
+      - QT_XCB_GL_INTEGRATION=none
+      - LIBGL_ALWAYS_SOFTWARE=1     # software renderer — safe default
       - API_HOST=host.docker.internal
 
     volumes:
-      # Wayland socket — this is the key mount
-      - /run/user/1000:/run/user/1000:rw
-      # DRM/GPU access for Panfrost
-      - /dev/dri:/dev/dri
-      # Time
+      - /tmp/.X11-unix:/tmp/.X11-unix:rw   # ← the key line
       - /etc/localtime:/etc/localtime:ro
       - /etc/timezone:/etc/timezone:ro
-    devices:
-      - /dev/dri:/dev/dri
 
-    # Needed for GPU group access
-    group_add:
-      - video
-      - render
-
-    privileged: false
     networks:
       - app-network
 
