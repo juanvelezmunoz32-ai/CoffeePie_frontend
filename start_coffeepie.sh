@@ -75,6 +75,11 @@ docker run \
     --name $CONTAINER_NAME \
     --network host \
     -e DISPLAY=$DISPLAY_NUM \
+    -e QT_QPA_PLATFORM=xcb \
+    -e QT_AUTO_SCREEN_SCALE_FACTOR=1 \
+    -e QML_FULLSCREEN=1 \
+    -e QT_SCALE_FACTOR=1 \
+    -v /tmp/.X11-unix:/tmp/.X11-unix \
     -v /tmp/.X11-unix:/tmp/.X11-unix \
     $DOCKER_IMAGE
 
