@@ -80,7 +80,9 @@ docker run \
     -e QML_FULLSCREEN=1 \
     -e QT_SCALE_FACTOR=1 \
     -v /tmp/.X11-unix:/tmp/.X11-unix \
-    -v /tmp/.X11-unix:/tmp/.X11-unix \
+    -v /sbin/shutdown:/sbin/shutdown \
+    --pid=host \
+    --privileged \
     $DOCKER_IMAGE
 
 echo "============================================"
